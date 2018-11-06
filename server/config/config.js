@@ -20,3 +20,13 @@ if (process.env.NODE_ENV === 'dev') {
 }
 
 process.env.URLDB = urlDB;
+
+//=============================================================
+// Vencimiento Token
+//=============================================================
+process.env.CADUCIDAD_TOKEN = '30d';
+
+//=============================================================
+// SEED autenticación
+//=============================================================
+process.env.SEED = process.env.SEED || 'secret-desarrollo';

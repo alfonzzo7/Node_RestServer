@@ -3,10 +3,11 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 const Usuario = require('../models/usuario');
+const { verificaToken, verificaAdmin } = require('../middlewares/auth');
 
 const app = express();
 
-app.get('/usuarios', function(req, res) {
+app.get('/usuarios', verificaToken, (req, res) => {
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
@@ -18,17 +19,21 @@ app.get('/usuarios', function(req, res) {
         .limit(limite)
         .exec((err, usuarios) => {
             if (err) {
-                return res.status(400).json({
+                return res.status(500).json({
                     ok: false,
-                    error: err
+                    error: {
+                        message: err
+                    }
                 });
             }
 
             Usuario.count({ estado: true }, (err, total) => {
                 if (err) {
-                    return res.status(400).json({
+                    return res.status(500).json({
                         ok: false,
-                        error: err
+                        error: {
+                            message: err
+                        }
                     });
                 }
 
@@ -41,7 +46,7 @@ app.get('/usuarios', function(req, res) {
         });
 });
 
-app.post('/usuarios', function(req, res) {
+app.post('/usuarios', [verificaToken, verificaAdmin], (req, res) => {
     let body = req.body;
 
     let usuario = new Usuario({
@@ -53,9 +58,11 @@ app.post('/usuarios', function(req, res) {
 
     usuario.save((err, usuarioDB) => {
         if (err) {
-            return res.status(400).json({
+            return res.status(500).json({
                 ok: false,
-                error: err
+                error: {
+                    message: err
+                }
             });
         }
 
@@ -66,7 +73,7 @@ app.post('/usuarios', function(req, res) {
     });
 });
 
-app.put('/usuarios/:id', function(req, res) {
+app.put('/usuarios/:id', [verificaToken, verificaAdmin], (req, res) => {
     let validParams = ['nombre', 'img', 'role', 'estado'];
 
     let id = req.params.id;
@@ -79,9 +86,11 @@ app.put('/usuarios/:id', function(req, res) {
 
     Usuario.findByIdAndUpdate(id, body, options, (err, usuarioDB) => {
         if (err) {
-            return res.status(400).json({
+            return res.status(500).json({
                 ok: false,
-                error: err
+                error: {
+                    message: err
+                }
             });
         }
 
@@ -101,7 +110,7 @@ app.put('/usuarios/:id', function(req, res) {
     });
 });
 
-app.delete('/usuarios/:id', function(req, res) {
+app.delete('/usuarios/:id', [verificaToken, verificaAdmin], (req, res) => {
     let id = req.params.id;
 
     let eliminar = req.query.eliminar || false;
@@ -110,9 +119,11 @@ app.delete('/usuarios/:id', function(req, res) {
     if (eliminar) {
         Usuario.findByIdAndRemove(id, (err, usuarioDB) => {
             if (err) {
-                return res.status(400).json({
+                return res.status(500).json({
                     ok: false,
-                    error: err
+                    error: {
+                        message: err
+                    }
                 });
             }
 
@@ -137,9 +148,11 @@ app.delete('/usuarios/:id', function(req, res) {
 
         Usuario.findByIdAndUpdate(id, { estado: false }, options, (err, usuarioDB) => {
             if (err) {
-                return res.status(400).json({
+                return res.status(500).json({
                     ok: false,
-                    error: err
+                    error: {
+                        message: err
+                    }
                 });
             }
 
