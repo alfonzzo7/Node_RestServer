@@ -138,7 +138,8 @@ app.delete('/usuarios/:id', [verificaToken, verificaAdmin], (req, res) => {
 
             res.json({
                 ok: true,
-                usuario: usuarioDB
+                usuario: usuarioDB,
+                message: 'Usuario Eliminado'
             });
         });
     } else {
@@ -167,7 +168,8 @@ app.delete('/usuarios/:id', [verificaToken, verificaAdmin], (req, res) => {
 
             res.json({
                 ok: true,
-                usuario: usuarioDB
+                usuario: usuarioDB,
+                message: 'Usuario Dado de Baja'
             });
         });
     }
