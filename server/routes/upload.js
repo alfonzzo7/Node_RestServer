@@ -8,12 +8,14 @@ const Producto = require('../models/producto');
 const fs = require('fs');
 const path = require('path');
 
+const { verificaToken } = require('../middlewares/auth');
+
 
 // default options
 app.use(fileUpload());
 
 
-app.put('/upload/:tipo/:id', function(req, res) {
+app.put('/upload/:tipo/:id', verificaToken, (req, res) => {
 
     let tipo = req.params.tipo;
     let id = req.params.id;
